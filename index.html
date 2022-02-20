@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Ethereum Voting Dapp</title>
+    <script src="./node_modules/web3/dist/web3.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+    <section class="menu">
+        <!-- title -->
+        <div class="title">
+            <h2>Voting Results</h2>
+            <div class="underline"></div>
+        </div>
+
+        <!--------------------------------------------------Candidates------------------------------------------------------>
+        
+
+        <!-------------------------------------------Buttons-------------------------------------------------------->
+
+        <div>
+            <div>
+                <div class="row">
+                    <div class="column buttonh3Div">
+                        <div id="button-div">
+                            <button id="get-candidates" class="btn-container filter-btn btn ">Get Number of
+                                Candidates</button>
+                            <h3 class="get-num-of-candidates-results "></h3>
+                        </div>
+                    </div>
+                    <div class="column buttonh3Div">
+                        <div id="button-div">
+                            <button id="get-voters" class="btn-container filter-btn btn">Get Number of Voters</button>
+                            <h3 class="get-num-of-voters-results" styles="font-size: large" ></h3>
+                        </div>
+                    </div>
+                    <div class="column buttonh3Div">
+                        <div id="button-div">
+                            <button id="get-candidate-votes" class="btn-container filter-btn btn">Get Votes of all
+                                Candidates</button>
+                            <h3 class="get-candidates-votes-results">Click to view the results</h3>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        
+        <!-- <div class="paragraphs" style="display: block;">
+            <p class="get-num-of-candidates-results "></p>
+            <p class="get-num-of-voters-results"></p>
+            <p class="get-candidates-votes-results">The results are shown<br />below</p>
+        </div> -->
+
+
+
+        
+    </section>
+    
+    <!--                             Slideshow                                -->
+    <!-- <div class = "display-candidates">
+        <div class="candidates-row">
+        
+        </div>
+    </div>  -->
+    
+    <div class="section-center"> </div>
+
+
+
+
+    <script>
+
+        let candidates = [{
+            name: "Candidate A",
+            party: "Party A",
+            symbol: "https://srisaiestatesandinfra.com/ban/clip2.png",
+            id: 1,
+            total_votes: 0,
+        },
+        {
+            name: "Candidate B",
+            party: "Party B",
+            symbol: "https://srisaiestatesandinfra.com/ban/clip2.png",
+            id: 2,
+            total_votes: 0,
+        },
+        {
+            name: "Candidate C",
+            party: "Party C",
+            symbol: "https://srisaiestatesandinfra.com/ban/clip2.png",
+            id: 3,
+            total_votes: 0,
+        },
+        {
+            name: "Candidate D",
+            party: "Party D",
+            symbol: "https://srisaiestatesandinfra.com/ban/clip2.png",
+            id: 4,
+            total_votes: 0,
+        },
+        {
+            name: "Candidate E",
+            party: "Party E",
+            symbol: "https://srisaiestatesandinfra.com/ban/clip2.png",
+            id: 5,
+            total_votes: 0,
+        },
+        {
+            name: "Candidate F",
+            party: "Party F",
+            symbol: "https://srisaiestatesandinfra.com/ban/clip2.png",
+            id: 6,
+            total_votes: 0,
+        },
+        ]
+
+
+
+        const sectionCenter = document.querySelector(".section-center");
+
+
+
+        //buttons//
+        let total_voters_button = document.getElementById("get-voters");
+        //getting the votes of all candidates
+        let candidate_info_button = document.getElementById("get-candidate-votes");
+        //voting for a candidate
+        const vote_button = document.querySelector(".vote-button");
+        //total number of candidates
+        let total_candidates_button = document.getElementById("get-candidates");
+        let numOfCandidates = document.querySelector(".get-num-of-candidates-results");
+        let totalNumOfVotes = document.querySelector(".get-num-of-voters-results");
+        let votesOfAllCandidates = document.querySelector(".get-candidates-votes-results");
+
+
+
+        // const showCandidates = async () => {
+        //     let displayCandidate = candidates.map(function (candidate) {
+        //         return `<article class="menu-item">
+        //                         <img src="${candidate.symbol}" alt="" class="photo" />
+        //                         <div class="item-info">
+        //                         <header>
+        //                             <h4>${candidate.name}</h4>
+        //                             <h4 class="price">${candidate.id} </h4>
+        //                         </header>
+        //                         <p class="item-text">${candidate.party}</p>
+        //                         </div>
+        //                     </article>`
+        //     });
+
+        //     displayCandidate = displayCandidate.join("");
+        //     sectionCenter.innerHTML = displayCandidate;
+        //     // alert("candidates loaded");
+        // }
+
+
+
+        let cards = document.querySelector(".candidates-row");
+
+        const slideshow = () => {
+            console.log("slides");
+
+            let displayCandidate = candidates.map(function (candidate) {
+                return `<article class="menu-item">
+                                <img src="${candidate.symbol}" alt="" class="photo" />
+                                <div class="item-info">
+                                <header>
+                                    <h4>${candidate.name}</h4>
+                                </header>
+                                <p class="item-text">${candidate.party}</p>
+                                <p class="item-text">${candidate.total_votes}</p>
+
+                                </div>
+                            </article>`
+            });
+
+            displayCandidate = displayCandidate.join("");
+            sectionCenter.innerHTML = displayCandidate;
+        }
+
+
+        window.addEventListener("load", function () {
+            // alert("loaded");
+            // showCandidates();
+            slideshow();
+        })
+
+
+
+
+
+        if (typeof web3 !== 'undefined') {
+            web3 = new Web3(web3.currentProvider);
+        } else {
+            web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+        }
+
+
+        var votingContract = new web3.eth.Contract([
+            {
+                "inputs": [],
+                "stateMutability": "nonpayable",
+                "type": "constructor"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": false,
+                        "internalType": "uint256",
+                        "name": "CandidateId",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "AddedCandidate",
+                "type": "event"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "string",
+                        "name": "uid",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "candidateId",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "Vote",
+                "outputs": [
+                    {
+                        "internalType": "string",
+                        "name": "",
+                        "type": "string"
+                    }
+                ],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "string",
+                        "name": "name",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "party",
+                        "type": "string"
+                    }
+                ],
+                "name": "addCandidate",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "getAllCandidates",
+                "outputs": [
+                    {
+                        "internalType": "uint256[]",
+                        "name": "",
+                        "type": "uint256[]"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "candidateID",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "getCandidate",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "getNumOfCandidates",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "getNumOfVoters",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "candidateId",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "numOfVotes",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ], '0xe1adA281e25Ec2F9e1F3C099D74E2fDdF111fc13');
+
+
+
+
+
+        let candidateId;
+        let voterId;
+
+
+        //get total number of candidates
+        total_candidates_button.addEventListener("click", function () {
+            console.log("clicked");
+            votingContract.methods.getNumOfCandidates().call(function (error, result) {
+                if (!error) {
+                    console.log(result);
+                } else
+                    console.log(error);
+                numOfCandidates.textContent = result;
+            })
+        })
+
+
+
+        //get total number of voters
+        total_voters_button.addEventListener("click", function () {
+            console.log("clicked");
+            votingContract.methods.getNumOfVoters().call(function (error, result) {
+                if (!error) {
+                    console.log(result);
+                } else
+                    console.log(error);
+                totalNumOfVotes.textContent = result;
+            })
+        })
+
+
+        //get number of votes for all the candidates
+        candidate_info_button.addEventListener("click", function (event) {
+            event.preventDefault();
+            console.log("clicked");
+            votingContract.methods.getAllCandidates().call(function (error, result) {
+                if (!error) {
+                    console.log(result);
+                    countVotes(result);
+                    votesOfAllCandidates.textContent = "The results are shown below";
+                } else
+                    console.log(error);
+            })
+
+        });
+
+        function countVotes(votes_array) {
+            for (var i = 1; i < votes_array.length; i++) {
+                candidates[i - 1].total_votes = votes_array[i];
+                console.log(candidates[i - 1].id, candidates[i - 1].name, candidates[i - 1].party, candidates[i - 1].total_votes);
+            }
+            slideshow();
+        }
+
+
+
+    </script>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
